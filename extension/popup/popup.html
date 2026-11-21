@@ -3,17 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
   <title>VeriLink</title>
+  <link rel="stylesheet" href="../ui/ui.css" />
   <link rel="stylesheet" href="popup.css" />
 </head>
-<body>
+<body class="vl-root">
   <header class="vl-header">
     <div class="vl-radar" id="radar" data-radar="verde" aria-hidden="true">
       <span class="vl-blip"></span>
     </div>
     <div class="vl-title">
       <p class="vl-brand">RADAR VERILINK</p>
-      <p class="vl-level" id="level">Analizando…</p>
+      <p class="vl-level" id="level" role="status">Analizando…</p>
       <p class="vl-score" id="score"></p>
     </div>
   </header>
@@ -35,10 +37,10 @@
   </main>
 
   <footer class="vl-actions">
+    <button type="button" id="btn-safe" class="vl-primary">Regresar a un sitio seguro</button>
     <button type="button" id="btn-signals">Ver análisis</button>
     <button type="button" id="btn-guide">Ver guía de seguridad</button>
-    <button type="button" id="btn-safe" class="vl-primary">Regresar a un sitio seguro</button>
-    <button type="button" id="btn-continue">Continuar bajo mi responsabilidad</button>
+    <button type="button" id="btn-continue" class="vl-link">Continuar bajo mi responsabilidad</button>
     <p class="vl-note" id="note" hidden></p>
   </footer>
 

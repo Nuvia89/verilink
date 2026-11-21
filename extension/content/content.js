@@ -61,8 +61,9 @@
     return li;
   }
 
-  function button(label, action, primary) {
-    const b = el('button', primary ? 'vl-primary' : '', label);
+  /** variant: 'vl-primary' (acción principal), 'vl-link' (acción discreta) o vacío. */
+  function button(label, action, variant) {
+    const b = el('button', variant || '', label);
     b.type = 'button';
     b.dataset.action = action;
     return b;
@@ -78,12 +79,15 @@
 
     const shadow = host.attachShadow({ mode: 'closed' });
 
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = chrome.runtime.getURL('content/overlay.css');
-    shadow.appendChild(link);
+    // Hoja compartida con el popup (ui/ui.css) + contenedor propio de la alerta.
+    for (const path of ['ui/ui.css', 'content/overlay.css']) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = chrome.runtime.getURL(path);
+      shadow.appendChild(link);
+    }
 
-    const alert = el('div', 'vl-alert');
+    const alert = el('div', 'vl-alert vl-root');
     alert.setAttribute('role', 'alert');
     // Color del nivel/tarjetas heredado por todos los descendientes.
     alert.style.setProperty('--radar', 'var(--' + result.radar + ')');
@@ -121,11 +125,11 @@
     // Acciones (docs/MVP.md §3)
     const actions = el('div', 'vl-actions');
     actions.append(
+      button('Regresar a un sitio seguro', 'safe', 'vl-primary'),
       // Las secciones nacen visibles, por tanto las etiquetas iniciales son "Ocultar…"
       button('Ocultar análisis', 'toggle-signals'),
       button('Ocultar guía de seguridad', 'toggle-guide'),
-      button('Regresar a un sitio seguro', 'safe', true),
-      button('Continuar bajo mi responsabilidad', 'continue')
+      button('Continuar bajo mi responsabilidad', 'continue', 'vl-link')
     );
     alert.append(actions);
 

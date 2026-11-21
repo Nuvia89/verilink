@@ -22,7 +22,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["content/overlay.css"],
+      "resources": ["ui/ui.css", "content/overlay.css"],
       "matches": ["http://*/*", "https://*/*"]
     }
   ]

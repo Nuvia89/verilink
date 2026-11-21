@@ -1,0 +1,373 @@
+/*
+ * VeriLink — sistema de diseño compartido.
+ * Lo cargan el popup (popup/popup.html) y la alerta en la página
+ * (content/content.js, dentro de un Shadow DOM). Una sola fuente de verdad:
+ * colores, radar, tarjetas, guía y botones. Lo específico de cada contenedor
+ * vive en popup/popup.css y content/overlay.css.
+ *
+ * Uso: el contenedor raíz lleva la clase .vl-root. El nivel de riesgo se
+ * aplica con --radar: var(--verde | --amarillo | --rojo).
+ */
+
+/* ------------------------------------------------------------------ tokens */
+
+.vl-root {
+  --bg: #ffffff;
+  --surface: #f3f6fb;
+  --line: #d3dbe8;
+  --text: #0f1b2d;
+  --muted: #4d5d75;
+
+  --brand: #1d4ed8;
+  --brand-hover: #1e40af;
+  --brand-ink: #ffffff;
+
+  /* Texto/acentos de nivel (contraste AA sobre --bg) */
+  --verde: #15803d;
+  --amarillo: #92400e;
+  --rojo: #b91c1c;
+  --radar: var(--verde);
+
+  /* Brillo del radar (siempre sobre disco oscuro) */
+  --glow-verde: #22c55e;
+  --glow-amarillo: #fbbf24;
+  --glow-rojo: #f87171;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text);
+  background: var(--bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .vl-root {
+    --bg: #0e1726;
+    --surface: #16233a;
+    --line: #28405f;
+    --text: #e8eef7;
+    --muted: #a3b3ca;
+
+    --brand: #3b82f6;
+    --brand-hover: #60a5fa;
+    --brand-ink: #06122b;
+
+    --verde: #4ade80;
+    --amarillo: #fbbf24;
+    --rojo: #f87171;
+  }
+}
+
+.vl-root *,
+.vl-root *::before,
+.vl-root *::after {
+  box-sizing: border-box;
+}
+
+.vl-root [hidden],
+.vl-root[hidden] {
+  display: none !important;
+}
+
+/* ----------------------------------------------------------------- cabecera */
+
+.vl-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--radar) 45%, var(--line));
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--radar) 9%, var(--bg));
+}
+
+.vl-title {
+  min-width: 0;
+}
+
+.vl-brand {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: var(--muted);
+}
+
+.vl-level {
+  margin: 2px 0 0;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--radar);
+}
+
+.vl-score {
+  display: inline-block;
+  margin: 6px 0 0;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+.vl-score:empty {
+  display: none;
+}
+
+/* ------------------------------------------------------------------- radar */
+
+.vl-radar {
+  --glow: var(--glow-verde);
+  position: relative;
+  flex: 0 0 auto;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--glow);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--glow) 55%, transparent);
+  background:
+    radial-gradient(circle,
+      transparent 0 20%, rgba(255,255,255,.08) 20% 22%,
+      transparent 22% 46%, rgba(255,255,255,.08) 46% 48%,
+      transparent 48% 72%, rgba(255,255,255,.08) 72% 74%,
+      transparent 74%),
+    radial-gradient(circle at 50% 50%, #10233a 0%, #08111f 100%);
+}
+
+.vl-radar[data-radar="verde"]    { --glow: var(--glow-verde); }
+.vl-radar[data-radar="amarillo"] { --glow: var(--glow-amarillo); }
+.vl-radar[data-radar="rojo"]     { --glow: var(--glow-rojo); }
+
+/* barrido */
+.vl-radar::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--glow) 50%, transparent) 0deg 70deg,
+    transparent 70deg 360deg
+  );
+  animation: vl-sweep 3.2s linear infinite;
+}
+
+/* mira */
+.vl-radar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, transparent calc(50% - .5px), rgba(255,255,255,.2) 50%, transparent calc(50% + .5px)),
+    linear-gradient(to bottom, transparent calc(50% - .5px), rgba(255,255,255,.2) 50%, transparent calc(50% + .5px));
+}
+
+.vl-blip {
+  position: absolute;
+  z-index: 1;
+  top: 26%;
+  left: 62%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--glow);
+  box-shadow: 0 0 8px var(--glow);
+  animation: vl-blink 1.6s ease-in-out infinite;
+}
+
+@keyframes vl-sweep { to { transform: rotate(360deg); } }
+@keyframes vl-blink { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .vl-radar::before,
+  .vl-blip {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------- secciones */
+
+.vl-section {
+  margin-top: 14px;
+}
+
+.vl-section h2 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--muted);
+}
+
+.vl-cards,
+.vl-guide {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+/* Señales */
+.vl-card {
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--radar);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.vl-card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.vl-card-title {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.vl-card-points {
+  flex: 0 0 auto;
+  padding: 0 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--radar);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--radar) 14%, transparent);
+}
+
+.vl-card-why {
+  display: block;
+  margin-top: 3px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* Guía: pasos numerados */
+.vl-guide {
+  counter-reset: vl-step;
+}
+
+.vl-guide li {
+  counter-increment: vl-step;
+  position: relative;
+  min-height: 22px;
+  padding-left: 30px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.vl-guide li::before {
+  content: counter(vl-step);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand-ink);
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.vl-empty {
+  margin: 0;
+  padding: 9px 11px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+/* ------------------------------------------------------------------ acciones */
+
+.vl-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.vl-actions button {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 10px;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.vl-actions button:hover {
+  border-color: var(--muted);
+}
+
+.vl-actions button:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.vl-actions button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+/* Acción principal */
+.vl-actions button.vl-primary {
+  grid-column: 1 / -1;
+  padding: 11px 12px;
+  font-size: 13.5px;
+  color: var(--brand-ink);
+  border-color: var(--brand);
+  background: var(--brand);
+}
+
+.vl-actions button.vl-primary:hover {
+  border-color: var(--brand-hover);
+  background: var(--brand-hover);
+}
+
+/* Acción de riesgo: discreta a propósito */
+.vl-actions button.vl-link {
+  grid-column: 1 / -1;
+  padding: 6px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: underline;
+  border-color: transparent;
+  background: transparent;
+}
+
+.vl-actions button.vl-link:hover {
+  color: var(--text);
+}
+
+.vl-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  text-align: center;
+  color: var(--muted);
+}
