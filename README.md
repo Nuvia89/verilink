@@ -4,6 +4,16 @@ Extensión para Chrome (Manifest V3, HTML/CSS/JS vanilla, sin dependencias) que
 detecta señales de riesgo en páginas web, explica qué encontró y sugiere cómo
 actuar. Especificación completa en [`docs/MVP.md`](docs/MVP.md).
 
+## Documentación
+
+| Documento | Contenido |
+|---|---|
+| [`docs/MVP.md`](docs/MVP.md) | Especificación del producto (qué es y qué debe hacer) |
+| [`docs/USUARIO.md`](docs/USUARIO.md) | Manual de usuario: radar, alerta, opciones y privacidad |
+| [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md) | Estructura, capas, flujo de datos, permisos y decisiones técnicas |
+| [`docs/REGLAS.md`](docs/REGLAS.md) | Especificación operativa de R1–R9, listas configurables y cómo agregar reglas |
+| [`docs/DESARROLLO.md`](docs/DESARROLLO.md) | Guía técnica: tests, iconos, checklist de cambios y límites conocidos |
+
 ## Estructura
 
 ```
