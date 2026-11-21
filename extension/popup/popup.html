@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VeriLink</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="vl-header">
+    <div class="vl-radar" id="radar" data-radar="verde" aria-hidden="true">
+      <span class="vl-blip"></span>
+    </div>
+    <div class="vl-title">
+      <p class="vl-brand">RADAR VERILINK</p>
+      <p class="vl-level" id="level">Analizando…</p>
+      <p class="vl-score" id="score"></p>
+    </div>
+  </header>
+
+  <main>
+    <section class="vl-section" id="section-signals">
+      <h2>¿Qué encontramos?</h2>
+      <ul class="vl-cards" id="signals"></ul>
+      <p class="vl-empty" id="signals-empty" hidden>
+        No se detectaron señales de riesgo en esta página. Recuerda que esto
+        no garantiza que sea segura.
+      </p>
+    </section>
+
+    <section class="vl-section" id="section-guide">
+      <h2>¿Qué te recomendamos?</h2>
+      <ul class="vl-guide" id="guide"></ul>
+    </section>
+  </main>
+
+  <footer class="vl-actions">
+    <button type="button" id="btn-signals">Ver análisis</button>
+    <button type="button" id="btn-guide">Ver guía de seguridad</button>
+    <button type="button" id="btn-safe" class="vl-primary">Regresar a un sitio seguro</button>
+    <button type="button" id="btn-continue">Continuar bajo mi responsabilidad</button>
+    <p class="vl-note" id="note" hidden></p>
+  </footer>
+
+  <script src="../data/brands.js"></script>
+  <script src="../rules.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

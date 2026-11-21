@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "VeriLink",
+  "version": "0.1.0",
+  "description": "Radar VeriLink: detecta señales de riesgo en páginas web, explica qué encontró y sugiere cómo actuar.",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "VeriLink"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["data/brands.js", "rules.js", "content/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["content/overlay.css"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ]
+}
